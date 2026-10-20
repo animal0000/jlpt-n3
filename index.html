@@ -304,7 +304,7 @@ function renderQuestions() {
               <button class="btn-speed" onclick="setSpeed(this, '${q.id}_audio', 1.25)">1.25x</button>
             </div>
           </div>
-          <audio id="${q.id}_audio" controls preload="metadata" src="${q.audio}"></audio>
+          <audio id="${q.id}_audio" controls preload="metadata" src="${q.audio}?v=20261020_audio2"></audio>
         </div>
       `;
     }
@@ -386,6 +386,17 @@ document.querySelectorAll(".btn-filter").forEach(btn => {
 // Init
 updateStats();
 renderQuestions();
+
+// [단일 오디오 배타적 재생 가드] 한 문항 재생 시 다른 모든 오디오 자동 일시정지 (중복 재생 원천 차단)
+document.addEventListener('play', function(e) {
+  if (e.target && e.target.tagName === 'AUDIO') {
+    document.querySelectorAll('audio').forEach(function(audio) {
+      if (audio !== e.target && !audio.paused) {
+        audio.pause();
+      }
+    });
+  }
+}, true);
 </script>
 </body>
 </html>
