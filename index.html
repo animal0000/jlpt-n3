@@ -215,7 +215,7 @@ const QUESTIONS = [{"id": "v1_vocab_01", "vol": 1, "vol_title": "2012년 제1집
 
 let curVol = "all";
 let curSec = "all";
-const userAnswers = JSON.parse(localStorage.getItem("jlpt_n3_user_answers") || "{}");
+const userAnswers = (() => { try { const parsed = JSON.parse(localStorage.getItem("jlpt_n3_user_answers") || "{}"); return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {}; } catch { return {}; } })();
 
 function saveUserAnswer(qid, choice, isCorrect) {
   userAnswers[qid] = { choice, isCorrect, timestamp: Date.now() };
@@ -285,7 +285,7 @@ function renderQuestions() {
       let btnClass = "choice-btn";
       if (isSolved) {
         if (c === q.answer) btnClass += " selected-correct";
-        else if (userRec.choice === c && !isUserCorrect) btnClass += " selected-wrong";
+        else if (Number(userRec.choice) === c && !isUserCorrect) btnClass += " selected-wrong";
       }
       choiceBtns += `<button class="${btnClass}" onclick="handleSelect('${q.id}', ${c})">${c}</button>`;
     }
@@ -315,7 +315,7 @@ function renderQuestions() {
       if (isUserCorrect) {
         resultBanner = `<div class="result-banner correct"><span>✅ 정답입니다! (정답: ${q.answer}번)</span></div>`;
       } else {
-        resultBanner = `<div class="result-banner wrong"><span>❌ 오답입니다. (정답: ${q.answer}번, 선택: ${userRec.choice}번)</span></div>`;
+        resultBanner = `<div class="result-banner wrong"><span>❌ 오답입니다. (정답: ${q.answer}번, 선택: ${Number(userRec.choice)}번)</span></div>`;
       }
     }
 
